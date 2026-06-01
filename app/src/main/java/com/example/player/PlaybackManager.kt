@@ -1,0 +1,48 @@
+package com.example.player
+
+import android.content.Context
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import com.example.data.Song
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+class PlaybackManager(context: Context) {
+    val player: ExoPlayer = ExoPlayer.Builder(context).build()
+    
+    private val _currentSong = MutableStateFlow<Song?>(null)
+    val currentSong: StateFlow<Song?> = _currentSong.asStateFlow()
+
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying.asStateFlow()
+
+    init {
+        player.addListener(object : Player.Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                _isPlaying.value = isPlaying
+            }
+        })
+    }
+
+    fun playSong(song: Song) {
+        _currentSong.value = song
+        val mediaItem = MediaItem.fromUri(song.dataPath)
+        player.setMediaItem(mediaItem)
+        player.prepare()
+        player.play()
+    }
+
+    fun togglePlayPause() {
+        if (player.isPlaying) {
+            player.pause()
+        } else {
+            player.play()
+        }
+    }
+
+    fun release() {
+        player.release()
+    }
+}

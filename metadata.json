@@ -1,0 +1,6 @@
+{
+  "name": "Player Music BR",
+  "description": "Local audio and video player with download support",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
